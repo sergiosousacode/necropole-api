@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import java.util.List;
 
 @RestController
@@ -47,6 +49,21 @@ public class CemiterioController {
     ) {
     
     return ResponseEntity.ok(service.buscarPorId(id));
+}
+
+    @PutMapping("/{id}")
+public ResponseEntity<CemiterioResponse> atualizar(
+        @PathVariable Long id,
+        @Valid @RequestBody CemiterioRequest request
+) {
+    return ResponseEntity.ok(service.atualizar(id, request));
+}
+
+@DeleteMapping("/{id}")
+public ResponseEntity<Void> excluir(@PathVariable Long id) {
+    service.excluir(id);
+
+    return ResponseEntity.noContent().build();
 }
 
 }

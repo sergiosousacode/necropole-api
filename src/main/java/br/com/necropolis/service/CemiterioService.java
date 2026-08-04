@@ -5,6 +5,7 @@ import br.com.necropolis.dto.response.CemiterioResponse;
 import br.com.necropolis.entity.Cemiterio;
 import br.com.necropolis.mapper.CemiterioMapper;
 import br.com.necropolis.repository.CemiterioRepository;
+import br.com.necropolis.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -39,8 +40,43 @@ public class CemiterioService {
 
     public CemiterioResponse buscarPorId(Long id){
         Cemiterio cemiterio = repository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Cemitério não encontrado"));
+            .orElseThrow(() ->
+        new ResourceNotFoundException(
+                "Cemitério não encontrado com o ID: " + id
+        )
+);
 
         return mapper.toResponse(cemiterio);
     }
+
+    public CemiterioResponse atualizar(Long id, CemiterioRequest request) {
+    Cemiterio cemiterio = repository.findById(id)
+            .orElseThrow(() ->
+                    new ResourceNotFoundException(
+                            "Cemitério não encontrado com o ID: " + id
+                    )
+            );
+
+    cemiterio.setNome(request.nome());
+    cemiterio.setEndereco(request.endereco());
+
+    if (request.ativo() != null) {
+        cemiterio.setAtivo(request.ativo());
+    }
+
+    Cemiterio atualizado = repository.save(cemiterio);
+
+    return mapper.toResponse(atualizado);
+    }
+
+    public void excluir(Long id) {
+    Cemiterio cemiterio = repository.findById(id)
+            .orElseThrow(() ->
+                    new ResourceNotFoundException(
+                            "Cemitério não encontrado com o ID: " + id
+                    )
+            );
+
+    repository.delete(cemiterio);
+}
 }
