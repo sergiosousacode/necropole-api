@@ -12,13 +12,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import br.com.necropolis.dto.request.LoteRequest;
-import br.com.necropolis.dto.request.QuadraRequest;
 import br.com.necropolis.dto.response.LoteResponse;
-import br.com.necropolis.dto.response.QuadraResponse;
 import br.com.necropolis.service.LoteService;
-import br.com.necropolis.service.QuadraService;
 import jakarta.validation.Valid;
 
 @RestController
