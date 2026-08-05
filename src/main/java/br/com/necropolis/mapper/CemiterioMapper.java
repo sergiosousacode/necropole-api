@@ -14,7 +14,7 @@ public class CemiterioMapper {
         cemiterio.setNome(request.nome());
         cemiterio.setEndereco(request.endereco());
 
-        if (request.ativo() != null){
+        if (request.ativo() != null) {
             cemiterio.setAtivo(request.ativo());
         }
 
@@ -23,12 +23,12 @@ public class CemiterioMapper {
 
     public CemiterioResponse toResponse(Cemiterio cemiterio) {
         return new CemiterioResponse(
-            cemiterio.getId(),
-            cemiterio.getNome(),
-            cemiterio.getEndereco(),
-            cemiterio.getAtivo(),
-            cemiterio.getCreatedAt(),
-            cemiterio.getUpdatedAt()
+                cemiterio.getId(),
+                cemiterio.getNome(),
+                cemiterio.getEndereco(),
+                cemiterio.getAtivo(),
+                cemiterio.getCreatedAt(),
+                cemiterio.getUpdatedAt()
 
         );
     }

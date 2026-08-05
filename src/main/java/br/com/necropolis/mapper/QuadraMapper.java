@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class QuadraMapper {
-
     public QuadraResponse toResponse(Quadra quadra) {
 
         return new QuadraResponse(
@@ -17,7 +16,6 @@ public class QuadraMapper {
                 quadra.getCemiterio().getId(),
                 quadra.getCemiterio().getNome(),
                 quadra.getCreatedAt(),
-                quadra.getUpdatedAt()
-        );
+                quadra.getUpdatedAt());
     }
 }

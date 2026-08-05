@@ -7,6 +7,5 @@ public interface QuadraRepository extends JpaRepository<Quadra, Long> {
 
     boolean existsByCemiterioIdAndNomeIgnoreCase(
             Long cemiterioId,
-            String nome
-    );
+            String nome);
 }
