@@ -28,8 +28,7 @@ public class CemiterioController {
 
     @PostMapping
     public ResponseEntity<CemiterioResponse> cadastrar(
-            @Valid @RequestBody CemiterioRequest request
-    ) {
+            @Valid @RequestBody CemiterioRequest request) {
         CemiterioResponse response = service.cadastrar(request);
 
         return ResponseEntity
@@ -39,31 +38,29 @@ public class CemiterioController {
 
     @GetMapping
     public ResponseEntity<List<CemiterioResponse>> listar() {
-    
+
         return ResponseEntity.ok(service.listar());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CemiterioResponse> buscarPorId(
-            @PathVariable Long id
-    ) {
-    
-    return ResponseEntity.ok(service.buscarPorId(id));
-}
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(service.buscarPorId(id));
+    }
 
     @PutMapping("/{id}")
-public ResponseEntity<CemiterioResponse> atualizar(
-        @PathVariable Long id,
-        @Valid @RequestBody CemiterioRequest request
-) {
-    return ResponseEntity.ok(service.atualizar(id, request));
-}
+    public ResponseEntity<CemiterioResponse> atualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody CemiterioRequest request) {
+        return ResponseEntity.ok(service.atualizar(id, request));
+    }
 
-@DeleteMapping("/{id}")
-public ResponseEntity<Void> excluir(@PathVariable Long id) {
-    service.excluir(id);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+        service.excluir(id);
 
-    return ResponseEntity.noContent().build();
-}
+        return ResponseEntity.noContent().build();
+    }
 
 }
