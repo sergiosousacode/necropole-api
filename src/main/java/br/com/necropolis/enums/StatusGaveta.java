@@ -1,5 +1,8 @@
 package br.com.necropolis.enums;
 
-public class StatusGaveta {
+public enum StatusGaveta {
+    LIVRE,
+    OCUPADA,
+    INATIVA
     
 }

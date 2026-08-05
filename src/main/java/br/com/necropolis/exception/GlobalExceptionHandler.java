@@ -11,19 +11,21 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-        @ExceptionHandler(ResourceNotFoundException.class)
-        public ResponseEntity<ErrorResponse> handleResourceNotFound(
-                        ResourceNotFoundException exception,
+        @ExceptionHandler(BusinessException.class)
+        public ResponseEntity<ErrorResponse> handleBusinessException(
+                        BusinessException exception,
                         HttpServletRequest request) {
+
                 ErrorResponse response = new ErrorResponse(
                                 LocalDateTime.now(),
-                                HttpStatus.NOT_FOUND.value(),
-                                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                                HttpStatus.CONFLICT.value(),
+                                HttpStatus.CONFLICT.getReasonPhrase(),
                                 exception.getMessage(),
                                 request.getRequestURI());
 
                 return ResponseEntity
-                                .status(HttpStatus.NOT_FOUND)
+                                .status(HttpStatus.CONFLICT)
                                 .body(response);
         }
+
 }
