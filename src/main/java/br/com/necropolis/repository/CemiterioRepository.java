@@ -1,7 +1,10 @@
 package br.com.necropolis.repository;
 
 import br.com.necropolis.entity.Cemiterio;
-import org.springframework.data.jpa.repository.JpaRepository;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import jakarta.enterprise.context.ApplicationScoped;
 
-public interface CemiterioRepository extends JpaRepository<Cemiterio, Long> {
+@ApplicationScoped
+public class CemiterioRepository implements PanacheRepository<Cemiterio> {
+
 }

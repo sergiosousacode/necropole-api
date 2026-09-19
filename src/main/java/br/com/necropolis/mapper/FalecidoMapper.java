@@ -2,9 +2,10 @@ package br.com.necropolis.mapper;
 
 import br.com.necropolis.dto.response.FalecidoResponse;
 import br.com.necropolis.entity.Falecido;
-import org.springframework.stereotype.Component;
 
-@Component
+import jakarta.enterprise.context.ApplicationScoped;
+
+@ApplicationScoped
 public class FalecidoMapper {
 
     public FalecidoResponse toResponse(Falecido falecido) {

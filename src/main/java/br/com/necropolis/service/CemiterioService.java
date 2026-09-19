@@ -3,70 +3,79 @@ package br.com.necropolis.service;
 import br.com.necropolis.dto.request.CemiterioRequest;
 import br.com.necropolis.dto.response.CemiterioResponse;
 import br.com.necropolis.entity.Cemiterio;
+import br.com.necropolis.exception.ResourceNotFoundException;
 import br.com.necropolis.mapper.CemiterioMapper;
 import br.com.necropolis.repository.CemiterioRepository;
-import br.com.necropolis.exception.ResourceNotFoundException;
-import org.springframework.stereotype.Service;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
+
 import java.util.List;
 
-@Service
+@ApplicationScoped
 public class CemiterioService {
 
-        private final CemiterioRepository repository;
-        private final CemiterioMapper mapper;
+    private final CemiterioRepository repository;
+    private final CemiterioMapper mapper;
 
-        public CemiterioService(
-                        CemiterioRepository repository,
-                        CemiterioMapper mapper) {
-                this.repository = repository;
-                this.mapper = mapper;
+    public CemiterioService(
+            CemiterioRepository repository,
+            CemiterioMapper mapper) {
+        this.repository = repository;
+        this.mapper = mapper;
+    }
+
+    @Transactional
+    public CemiterioResponse cadastrar(CemiterioRequest request) {
+
+        Cemiterio cemiterio = mapper.toEntity(request);
+
+        repository.persist(cemiterio);
+
+        return mapper.toResponse(cemiterio);
+    }
+
+    public List<CemiterioResponse> listar() {
+
+        return repository.listAll()
+                .stream()
+                .map(mapper::toResponse)
+                .toList();
+    }
+
+    public CemiterioResponse buscarPorId(Long id) {
+
+        Cemiterio cemiterio = repository.findByIdOptional(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Cemitério não encontrado com o ID: " + id));
+
+        return mapper.toResponse(cemiterio);
+    }
+
+    @Transactional
+    public CemiterioResponse atualizar(Long id, CemiterioRequest request) {
+
+        Cemiterio cemiterio = repository.findByIdOptional(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Cemitério não encontrado com o ID: " + id));
+
+        cemiterio.setNome(request.nome());
+        cemiterio.setEndereco(request.endereco());
+
+        if (request.ativo() != null) {
+            cemiterio.setAtivo(request.ativo());
         }
 
-        public CemiterioResponse cadastrar(CemiterioRequest request) {
-                Cemiterio cemiterio = mapper.toEntity(request);
-                Cemiterio salvo = repository.save(cemiterio);
+        return mapper.toResponse(cemiterio);
+    }
 
-                return mapper.toResponse(salvo);
-        }
+    @Transactional
+    public void excluir(Long id) {
 
-        public List<CemiterioResponse> listar() {
+        Cemiterio cemiterio = repository.findByIdOptional(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Cemitério não encontrado com o ID: " + id));
 
-                return repository.findAll()
-                                .stream()
-                                .map(mapper::toResponse)
-                                .toList();
-        }
-
-        public CemiterioResponse buscarPorId(Long id) {
-                Cemiterio cemiterio = repository.findById(id)
-                                .orElseThrow(() -> new ResourceNotFoundException(
-                                                "Cemitério não encontrado com o ID: " + id));
-
-                return mapper.toResponse(cemiterio);
-        }
-
-        public CemiterioResponse atualizar(Long id, CemiterioRequest request) {
-                Cemiterio cemiterio = repository.findById(id)
-                                .orElseThrow(() -> new ResourceNotFoundException(
-                                                "Cemitério não encontrado com o ID: " + id));
-
-                cemiterio.setNome(request.nome());
-                cemiterio.setEndereco(request.endereco());
-
-                if (request.ativo() != null) {
-                        cemiterio.setAtivo(request.ativo());
-                }
-
-                Cemiterio atualizado = repository.save(cemiterio);
-
-                return mapper.toResponse(atualizado);
-        }
-
-        public void excluir(Long id) {
-                Cemiterio cemiterio = repository.findById(id)
-                                .orElseThrow(() -> new ResourceNotFoundException(
-                                                "Cemitério não encontrado com o ID: " + id));
-
-                repository.delete(cemiterio);
-        }
+        repository.delete(cemiterio);
+    }
 }

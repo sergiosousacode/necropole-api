@@ -3,9 +3,10 @@ package br.com.necropolis.mapper;
 import br.com.necropolis.dto.request.CemiterioRequest;
 import br.com.necropolis.dto.response.CemiterioResponse;
 import br.com.necropolis.entity.Cemiterio;
-import org.springframework.stereotype.Component;
 
-@Component
+import jakarta.enterprise.context.ApplicationScoped;
+
+@ApplicationScoped
 public class CemiterioMapper {
 
     public Cemiterio toEntity(CemiterioRequest request) {

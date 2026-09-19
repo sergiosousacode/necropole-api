@@ -1,12 +1,13 @@
 package br.com.necropolis.mapper;
 
-import org.springframework.stereotype.Component;
-
 import br.com.necropolis.dto.response.LoteResponse;
 import br.com.necropolis.entity.Lote;
 
-@Component
+import jakarta.enterprise.context.ApplicationScoped;
+
+@ApplicationScoped
 public class LoteMapper {
+
     public LoteResponse toResponse(Lote lote) {
 
         return new LoteResponse(
@@ -19,7 +20,7 @@ public class LoteMapper {
                 lote.getQuadra().getId(),
                 lote.getQuadra().getNome(),
                 lote.getCreatedAt(),
-                lote.getUpdatedAt());
+                lote.getUpdatedAt()
+        );
     }
-    
 }

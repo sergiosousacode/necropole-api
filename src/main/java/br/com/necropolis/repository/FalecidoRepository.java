@@ -1,8 +1,17 @@
 package br.com.necropolis.repository;
 
 import br.com.necropolis.entity.Falecido;
-import org.springframework.data.jpa.repository.JpaRepository;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import jakarta.enterprise.context.ApplicationScoped;
 
-public interface FalecidoRepository extends JpaRepository<Falecido, Long> {
-    boolean existsByNomeIgnoreCase(String nome);
+@ApplicationScoped
+public class FalecidoRepository implements PanacheRepository<Falecido> {
+
+    public boolean existsByNomeIgnoreCase(String nome) {
+
+        return count(
+                "lower(nome) = lower(?1)",
+                nome
+        ) > 0;
+    }
 }

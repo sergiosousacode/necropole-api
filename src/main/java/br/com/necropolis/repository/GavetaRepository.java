@@ -1,14 +1,28 @@
 package br.com.necropolis.repository;
 
 import br.com.necropolis.entity.Gaveta;
-import org.springframework.data.jpa.repository.JpaRepository;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import jakarta.enterprise.context.ApplicationScoped;
 
-public interface GavetaRepository extends JpaRepository<Gaveta, Long> {
+@ApplicationScoped
+public class GavetaRepository implements PanacheRepository<Gaveta> {
 
-    boolean existsByLoteIdAndNumero(
+    public boolean existsByLoteIdAndNumero(
             Long loteId,
-            Integer numero
-    );
+            Integer numero) {
 
-    long countByLoteId(Long loteId);
+        return count(
+                "lote.id = ?1 and numero = ?2",
+                loteId,
+                numero
+        ) > 0;
+    }
+
+    public long countByLoteId(Long loteId) {
+
+        return count(
+                "lote.id = ?1",
+                loteId
+        );
+    }
 }

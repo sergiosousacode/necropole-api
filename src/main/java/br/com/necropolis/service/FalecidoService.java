@@ -7,11 +7,13 @@ import br.com.necropolis.exception.BusinessException;
 import br.com.necropolis.exception.ResourceNotFoundException;
 import br.com.necropolis.mapper.FalecidoMapper;
 import br.com.necropolis.repository.FalecidoRepository;
-import org.springframework.stereotype.Service;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
-@Service
+@ApplicationScoped
 public class FalecidoService {
 
     private final FalecidoRepository falecidoRepository;
@@ -19,12 +21,13 @@ public class FalecidoService {
 
     public FalecidoService(
             FalecidoRepository falecidoRepository,
-            FalecidoMapper mapper
-    ) {
+            FalecidoMapper mapper) {
+
         this.falecidoRepository = falecidoRepository;
         this.mapper = mapper;
     }
 
+    @Transactional
     public FalecidoResponse cadastrar(FalecidoRequest request) {
 
         if (falecidoRepository.existsByNomeIgnoreCase(request.nome())) {
@@ -34,6 +37,7 @@ public class FalecidoService {
         }
 
         Falecido falecido = new Falecido();
+
         falecido.setNome(request.nome());
         falecido.setDataNascimento(request.dataNascimento());
         falecido.setDataObito(request.dataObito());
@@ -44,13 +48,14 @@ public class FalecidoService {
             falecido.setAtivo(request.ativo());
         }
 
-        Falecido salvo = falecidoRepository.save(falecido);
+        falecidoRepository.persist(falecido);
 
-        return mapper.toResponse(salvo);
+        return mapper.toResponse(falecido);
     }
 
     public List<FalecidoResponse> listar() {
-        return falecidoRepository.findAll()
+
+        return falecidoRepository.listAll()
                 .stream()
                 .map(mapper::toResponse)
                 .toList();
@@ -60,7 +65,10 @@ public class FalecidoService {
         return mapper.toResponse(buscarFalecido(id));
     }
 
-    public FalecidoResponse atualizar(Long id, FalecidoRequest request) {
+    @Transactional
+    public FalecidoResponse atualizar(
+            Long id,
+            FalecidoRequest request) {
 
         Falecido falecido = buscarFalecido(id);
 
@@ -74,18 +82,20 @@ public class FalecidoService {
             falecido.setAtivo(request.ativo());
         }
 
-        Falecido atualizado = falecidoRepository.save(falecido);
-
-        return mapper.toResponse(atualizado);
+        return mapper.toResponse(falecido);
     }
 
+    @Transactional
     public void excluir(Long id) {
+
         Falecido falecido = buscarFalecido(id);
+
         falecidoRepository.delete(falecido);
     }
 
     private Falecido buscarFalecido(Long id) {
-        return falecidoRepository.findById(id)
+
+        return falecidoRepository.findByIdOptional(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
                                 "Falecido não encontrado com o ID: " + id

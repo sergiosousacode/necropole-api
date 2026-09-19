@@ -10,11 +10,12 @@ import br.com.necropolis.mapper.GavetaMapper;
 import br.com.necropolis.repository.GavetaRepository;
 import br.com.necropolis.repository.LoteRepository;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
+
 import java.util.List;
 
-import org.springframework.stereotype.Service;
-
-@Service
+@ApplicationScoped
 public class GavetaService {
 
     private final GavetaRepository gavetaRepository;
@@ -31,11 +32,28 @@ public class GavetaService {
         this.mapper = mapper;
     }
 
+    @Transactional
     public GavetaResponse cadastrar(GavetaRequest request) {
 
-        Lote lote = loteRepository.findById(request.loteId())
+        Lote lote = loteRepository
+                .findByIdOptional(request.loteId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Lote não encontrado com o ID: " + request.loteId()));
+
+        if (gavetaRepository.existsByLoteIdAndNumero(
+                request.loteId(),
+                request.numero())) {
+
+            throw new BusinessException(
+                    "Já existe uma gaveta com esse número neste lote.");
+        }
+
+        long quantidade = gavetaRepository.countByLoteId(lote.getId());
+
+        if (quantidade >= lote.getCapacidade()) {
+            throw new BusinessException(
+                    "O lote já atingiu sua capacidade máxima.");
+        }
 
         Gaveta gaveta = new Gaveta();
 
@@ -50,29 +68,14 @@ public class GavetaService {
             gaveta.setAtivo(request.ativo());
         }
 
-        if (gavetaRepository.existsByLoteIdAndNumero(
-                request.loteId(),
-                request.numero())) {
+        gavetaRepository.persist(gaveta);
 
-            throw new BusinessException(
-                    "Já existe uma gaveta com esse número neste lote.");
-        }
-
-        long quantidade = gavetaRepository.countByLoteId(lote.getId());
-
-        if (quantidade >= lote.getCapacidade()) {
-
-            throw new BusinessException(
-                    "O lote já atingiu sua capacidade máxima.");
-        }
-
-        Gaveta salva = gavetaRepository.save(gaveta);
-
-        return mapper.toResponse(salva);
+        return mapper.toResponse(gaveta);
     }
 
     public List<GavetaResponse> listar() {
-        return gavetaRepository.findAll()
+
+        return gavetaRepository.listAll()
                 .stream()
                 .map(mapper::toResponse)
                 .toList();
@@ -80,18 +83,22 @@ public class GavetaService {
 
     public GavetaResponse buscarPorId(Long id) {
 
-        Gaveta gaveta = gavetaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Gaveta não encontrada com o ID: " + id));
-        return mapper.toResponse(gaveta);
-    }
-
-    public GavetaResponse atualizar(Long id, GavetaRequest request) {
-
-        Gaveta gaveta = gavetaRepository.findById(id)
+        Gaveta gaveta = gavetaRepository.findByIdOptional(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Gaveta não encontrada com o ID: " + id));
 
-        Lote lote = loteRepository.findById(request.loteId())
+        return mapper.toResponse(gaveta);
+    }
+
+    @Transactional
+    public GavetaResponse atualizar(Long id, GavetaRequest request) {
+
+        Gaveta gaveta = gavetaRepository.findByIdOptional(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Gaveta não encontrada com o ID: " + id));
+
+        Lote lote = loteRepository
+                .findByIdOptional(request.loteId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Lote não encontrado com o ID: " + request.loteId()));
 
@@ -106,16 +113,16 @@ public class GavetaService {
             gaveta.setAtivo(request.ativo());
         }
 
-        Gaveta atualizada = gavetaRepository.save(gaveta);
-
-        return mapper.toResponse(atualizada);
+        return mapper.toResponse(gaveta);
     }
 
+    @Transactional
     public void excluir(Long id) {
-        Gaveta gaveta = gavetaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Gaveta não encontrada com o ID " + id));
+
+        Gaveta gaveta = gavetaRepository.findByIdOptional(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Gaveta não encontrada com o ID: " + id));
 
         gavetaRepository.delete(gaveta);
     }
-
 }

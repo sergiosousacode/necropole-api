@@ -1,11 +1,20 @@
 package br.com.necropolis.repository;
 
 import br.com.necropolis.entity.Quadra;
-import org.springframework.data.jpa.repository.JpaRepository;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import jakarta.enterprise.context.ApplicationScoped;
 
-public interface QuadraRepository extends JpaRepository<Quadra, Long> {
+@ApplicationScoped
+public class QuadraRepository implements PanacheRepository<Quadra> {
 
-    boolean existsByCemiterioIdAndNomeIgnoreCase(
+    public boolean existsByCemiterioIdAndNomeIgnoreCase(
             Long cemiterioId,
-            String nome);
+            String nome) {
+
+        return count(
+                "cemiterio.id = ?1 and lower(nome) = lower(?2)",
+                cemiterioId,
+                nome
+        ) > 0;
+    }
 }

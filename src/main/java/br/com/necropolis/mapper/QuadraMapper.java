@@ -2,9 +2,9 @@ package br.com.necropolis.mapper;
 
 import br.com.necropolis.dto.response.QuadraResponse;
 import br.com.necropolis.entity.Quadra;
-import org.springframework.stereotype.Component;
+import jakarta.enterprise.context.ApplicationScoped;
 
-@Component
+@ApplicationScoped
 public class QuadraMapper {
     public QuadraResponse toResponse(Quadra quadra) {
 

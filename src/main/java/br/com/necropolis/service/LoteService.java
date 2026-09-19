@@ -8,11 +8,13 @@ import br.com.necropolis.exception.ResourceNotFoundException;
 import br.com.necropolis.mapper.LoteMapper;
 import br.com.necropolis.repository.LoteRepository;
 import br.com.necropolis.repository.QuadraRepository;
-import org.springframework.stereotype.Service;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
-@Service
+@ApplicationScoped
 public class LoteService {
 
     private final LoteRepository loteRepository;
@@ -22,17 +24,20 @@ public class LoteService {
     public LoteService(
             LoteRepository loteRepository,
             QuadraRepository quadraRepository,
-            LoteMapper mapper
-    ) {
+            LoteMapper mapper) {
+
         this.loteRepository = loteRepository;
         this.quadraRepository = quadraRepository;
         this.mapper = mapper;
     }
 
+    @Transactional
     public LoteResponse cadastrar(LoteRequest request) {
+
         Quadra quadra = buscarQuadra(request.quadraId());
 
         Lote lote = new Lote();
+
         lote.setNumero(request.numero());
         lote.setDescricao(request.descricao());
         lote.setCapacidade(request.capacidade());
@@ -46,25 +51,29 @@ public class LoteService {
             lote.setAtivo(request.ativo());
         }
 
-        Lote salvo = loteRepository.save(lote);
+        loteRepository.persist(lote);
 
-        return mapper.toResponse(salvo);
+        return mapper.toResponse(lote);
     }
 
     public List<LoteResponse> listar() {
-        return loteRepository.findAll()
+
+        return loteRepository.listAll()
                 .stream()
                 .map(mapper::toResponse)
                 .toList();
     }
 
     public LoteResponse buscarPorId(Long id) {
+
         Lote lote = buscarLote(id);
 
         return mapper.toResponse(lote);
     }
 
+    @Transactional
     public LoteResponse atualizar(Long id, LoteRequest request) {
+
         Lote lote = buscarLote(id);
         Quadra quadra = buscarQuadra(request.quadraId());
 
@@ -81,18 +90,20 @@ public class LoteService {
             lote.setAtivo(request.ativo());
         }
 
-        Lote atualizado = loteRepository.save(lote);
-
-        return mapper.toResponse(atualizado);
+        return mapper.toResponse(lote);
     }
 
+    @Transactional
     public void excluir(Long id) {
+
         Lote lote = buscarLote(id);
+
         loteRepository.delete(lote);
     }
 
     private Lote buscarLote(Long id) {
-        return loteRepository.findById(id)
+
+        return loteRepository.findByIdOptional(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
                                 "Lote não encontrado com o ID: " + id
@@ -101,7 +112,8 @@ public class LoteService {
     }
 
     private Quadra buscarQuadra(Long id) {
-        return quadraRepository.findById(id)
+
+        return quadraRepository.findByIdOptional(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
                                 "Quadra não encontrada com o ID: " + id

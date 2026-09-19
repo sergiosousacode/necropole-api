@@ -1,12 +1,20 @@
 package br.com.necropolis.repository;
 
 import br.com.necropolis.entity.Lote;
-import org.springframework.data.jpa.repository.JpaRepository;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import jakarta.enterprise.context.ApplicationScoped;
 
-public interface LoteRepository extends JpaRepository<Lote, Long> {
+@ApplicationScoped
+public class LoteRepository implements PanacheRepository<Lote> {
 
-    boolean existsByQuadraIdAndNumeroIgnoreCase(
+    public boolean existsByQuadraIdAndNumeroIgnoreCase(
             Long quadraId,
-            String numero
-    );
+            String numero) {
+
+        return count(
+                "quadra.id = ?1 and lower(numero) = lower(?2)",
+                quadraId,
+                numero
+        ) > 0;
+    }
 }

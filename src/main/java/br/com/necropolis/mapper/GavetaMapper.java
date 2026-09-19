@@ -1,12 +1,13 @@
 package br.com.necropolis.mapper;
 
-import org.springframework.stereotype.Component;
-
 import br.com.necropolis.dto.response.GavetaResponse;
 import br.com.necropolis.entity.Gaveta;
 
-@Component
+import jakarta.enterprise.context.ApplicationScoped;
+
+@ApplicationScoped
 public class GavetaMapper {
+
     public GavetaResponse toResponse(Gaveta gaveta) {
 
         return new GavetaResponse(
@@ -17,7 +18,7 @@ public class GavetaMapper {
                 gaveta.getLote().getId(),
                 gaveta.getLote().getNumero(),
                 gaveta.getCreatedAt(),
-                gaveta.getUpdatedAt());
+                gaveta.getUpdatedAt()
+        );
     }
-    
 }

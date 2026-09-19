@@ -10,6 +10,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import jakarta.persistence.EnumType;
+
+
 @Entity
 @Table(name = "lotes")
 public class Lote extends BaseEntity {
@@ -23,7 +26,7 @@ public class Lote extends BaseEntity {
     @Column(nullable = false)
     private Integer capacidade = 3;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatusLote status = StatusLote.LIVRE;
     

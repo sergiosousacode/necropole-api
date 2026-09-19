@@ -1,20 +1,22 @@
 package br.com.necropolis.dto.request;
 
 import br.com.necropolis.enums.StatusGaveta;
+
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 public record GavetaRequest(
-    @NotNull(message = "O número de gavetas é obrigatório")
-    @Positive(message = "O número da gaveta deve ser maior que zero")
-    Integer numero,
 
+        @NotNull(message = "O número da gaveta é obrigatório")
+        @Positive(message = "O número da gaveta deve ser maior que zero")
+        Integer numero,
 
-    StatusGaveta status,
-    Boolean ativo,
+        StatusGaveta status,
 
-    @NotNull(message = "O lote é obrigatório")
-    Long loteId
+        Boolean ativo,
+
+        @NotNull(message = "O lote é obrigatório")
+        Long loteId
+
 ) {
-    
 }
